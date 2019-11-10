@@ -75,10 +75,10 @@ endif ()
 
 # Generated source files
 add_executable (gen_ccsds gen_ccsds.c init_rs_char_local.c)
-add_custom_command (OUTPUT ccsds_tab.c COMMAND gen_ccsds > ccsds_tab.c)
+add_custom_command (OUTPUT ccsds_tab.c COMMAND ${PROJECT_BINARY_DIR}/gen_ccsds > ccsds_tab.c)
 
 add_executable (gen_ccsds_tal gen_ccsds_tal.c)
-add_custom_command (OUTPUT ccsds_tal.c COMMAND gen_ccsds_tal > ccsds_tal.c)
+add_custom_command (OUTPUT ccsds_tal.c COMMAND ${PROJECT_BINARY_DIR}/gen_ccsds_tal > ccsds_tal.c)
 
 set (LIBFEC_GENLIBS ccsds_tal.c ccsds_tab.c)
 
@@ -90,9 +90,11 @@ add_library (fec ${LIBFEC_MLIBS} ${LIBFEC_GENLIBS} fec.c sim.c viterbi27.c
     init_rs_int.c encode_rs_ccsds.c decode_rs_ccsds.c dotprod.c dotprod_port.c
     peakval.c peakval_port.c sumsq.c sumsq_port.c)
 target_link_libraries (fec INTERFACE m)
-set_target_properties (fec PROPERTIES 
+set_target_properties (fec PROPERTIES
     VERSION "3.0.0"
     SOVERSION 3)
+
+add_dependencies( fec gen_ccsds gen_ccsds_tal )
 
 install (TARGETS fec
     LIBRARY DESTINATION lib
